@@ -50,3 +50,4 @@ LOGGING = {
         }
     }
 }
+ALLOWED_HOSTS = ['.newsmaker.tv']
