@@ -4,7 +4,7 @@ environ.Env.read_env(env('DJANGO_ENV_DIR'))
 from .settings import *
 
 
-DEBUG = False 
+DEBUG = True 
 
 DATABASES['default'].update({
     'HOST': env('MYSQL_HOST'),
