@@ -51,3 +51,5 @@ LOGGING = {
     }
 }
 ALLOWED_HOSTS = ['.newsmaker.tv']
+STATIC_ROOT = '/var/www/nm/moo_o/static'
+
