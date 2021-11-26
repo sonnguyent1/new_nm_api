@@ -7,6 +7,7 @@ from .settings import *
 DEBUG = True 
 
 DATABASES['default'].update({
+    'ENGINE': 'django.db.backends.mysql',
     'HOST': env('MYSQL_HOST'),
     'NAME':  env('MYSQL_DATABASE'),
     'USER': env('MYSQL_USER'),
