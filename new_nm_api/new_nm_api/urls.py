@@ -15,9 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import re_path
 from django.views.generic import TemplateView
+from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    re_path('^auth/token/verify/?$', verify_jwt_token),
+    re_path('^auth/token/refresh/?$', refresh_jwt_token),
+    re_path('^auth/token', obtain_jwt_token),
     path('', TemplateView.as_view(template_name='home.html')),
 ]

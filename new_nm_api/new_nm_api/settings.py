@@ -118,3 +118,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
+}
+
+JWT_AUTH = {
+    'JWT_PAYLOAD_HANDLER': 'new_nm_api.jwt_handles.nm_jwt_playload_handler',
+    'JWT_ALLOW_REFRESH': True
+}
+
+APP_FILE_BASE_PATH = '/tmp/lesson2go_files/'
+
+CORS_ORIGIN_ALLOW_ALL = True
