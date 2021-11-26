@@ -132,7 +132,7 @@ REST_FRAMEWORK = {
 }
 
 JWT_AUTH = {
-    'JWT_PAYLOAD_HANDLER': 'new_nm_api.jwt_handles.nm_jwt_playload_handler',
+    'JWT_PAYLOAD_HANDLER': 'new_nm_api.jwt_handlers.nm_jwt_playload_handler',
     'JWT_ALLOW_REFRESH': True
 }
 
