@@ -9,9 +9,9 @@ DEBUG = True
 DATABASES['default'].update({
     'ENGINE': 'django.db.backends.mysql',
     'HOST': env('MYSQL_HOST'),
-    'NAME':  env('MYSQL_DATABASE'),
-    'USER': env('MYSQL_USER'),
-    'PASSWORD': env('MYSQL_PASSWORD'),
+    'NAME':  env('NM_DATABASE'),
+    'USER': env('NM_USER'),
+    'PASSWORD': env('NM_PASSWORD'),
 })
 
 LOGGING = {
