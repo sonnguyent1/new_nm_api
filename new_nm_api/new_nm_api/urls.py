@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import re_path
@@ -21,7 +22,7 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    re_path('^presentations/', include('new_nm_api.api.urls')),
     re_path('^auth/token/verify/?$', verify_jwt_token),
     re_path('^auth/token/refresh/?$', refresh_jwt_token),
     re_path('^auth/token', obtain_jwt_token),
