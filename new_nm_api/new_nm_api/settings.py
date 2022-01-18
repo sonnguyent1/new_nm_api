@@ -150,3 +150,10 @@ JWT_AUTH = {
 APP_FILE_BASE_PATH = '/tmp/lesson2go_files/'
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+class FileServers:
+    CHINA = 'http://media.moo-o.cn/'
+    WESTERN = 'http://media-us.newsmaker.tv/'
+    DEFAULTS = 'http://media.moo-o.com/'
+
+FS_SECRET_KEY = 'y_oe31qkwwumtmae%cbrnmt*b&amp;q#vp@vu_iae%bqbw(&amp;ds5@o^'
