@@ -20,9 +20,7 @@ class TVPresentationViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         members = TVPresentationMember.objects.filter(
             user_id=self.request.user.pk)
-        return qs.filter(Q(self.request.user.is_superuser == True) | 
-                        Q(user_id=self.request.user.pk) | 
-                        Q(pk__in=[m.tvpresentation_id for m in members]))
+        return qs.filter(Q(user_id=self.request.user.pk) | Q(user_id=self.request.user.pk) | Q(pk__in=[m.tvpresentation_id for m in members]))
 
 
 presentations_details = TVPresentationViewSet.as_view({
