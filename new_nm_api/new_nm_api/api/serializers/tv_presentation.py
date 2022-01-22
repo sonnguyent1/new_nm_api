@@ -65,18 +65,24 @@ class TVPresentationSerializer(serializers.ModelSerializer):
         return (UserSerializer(obj.user)).data 
     
     def get_member_objs(self, obj):
-        return [(UserSerializer(m.user)).data for m in obj.members.filter(user__is_active=True, user__is_superuser=False)]
+        return [(UserSerializer(m.user)).data for m in obj.members.filter(user__is_active=True)]
 
     @transaction.atomic
     def save(self, **kwargs):
         members = self.validated_data.pop('members') if self.validated_data.get('members') else None
+        is_created = self.instance is None
         instance = super().save(**kwargs)
         if members:
             qs_members = User.objects.filter(pk__in=[user.id for user in members])
             if qs_members.count() == len(members):
                 for m in members:
                     TVPresentationMember.objects.update_or_create(tvpresentation_id=instance.pk, user_id=m.id)
-        instance.folder_id = self.create_folder_for_user(instance)
+        
+        if is_created:
+            instance.folder_id = self.create_folder_for_user(instance)
+        elif self.validated_data.get('folder_id'):
+            instance.folder_id = self.validated_data['folder_id']
+        
         instance.save()
         return instance
 
