@@ -5,7 +5,7 @@ from django.db.models.deletion import CASCADE
 class TVPresentation(models.Model):
     title = models.CharField(max_length=255)
     folder_id = models.CharField(max_length=127)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     video_type = models.CharField(max_length=16, 
         choices=(('tall', 'TALL'), ('wide', 'WIDE',),))
     display_color = models.CharField(max_length=32)

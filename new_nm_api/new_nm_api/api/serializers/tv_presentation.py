@@ -21,7 +21,10 @@ class TVPresentationSerializer(serializers.ModelSerializer):
     members = serializers.ListField(child = serializers.CharField(), 
         write_only=True, read_only=False, required=False)
     class Meta:
-        extra_kwargs = {'folder_id': {'required': False, 'allow_blank': True}} 
+        extra_kwargs = {
+            'folder_id': {'required': False, 'allow_blank': True},
+            'description': {'required': False, 'allow_blank': True},
+        } 
         model = TVPresentation
         fields = (
             'id',
