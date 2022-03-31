@@ -15,7 +15,7 @@ class TVPresentation(models.Model):
     file_size = models.PositiveIntegerField()
     deleted = models.BooleanField(default=False)
     template = models.CharField(max_length=127, null=True)
-    is_template = models.BooleanField(default=False)
+    # is_template = models.BooleanField(default=False)
     created_on = models.DateTimeField(null=True, blank=True, auto_now_add=True)
     last_modified = models.DateTimeField(null=True, blank=True, auto_now=True)
 
