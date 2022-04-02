@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'tv.apps.TvConfig',
 ]
 
 MIDDLEWARE = [
@@ -147,7 +148,6 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True
 }
 
-APP_FILE_BASE_PATH = '/tmp/lesson2go_files/'
 
 CORS_ORIGIN_ALLOW_ALL = True
 

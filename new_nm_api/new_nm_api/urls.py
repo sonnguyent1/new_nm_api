@@ -23,6 +23,7 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh
 
 urlpatterns = [
     re_path('^presentations/', include('new_nm_api.api.urls')),
+    re_path('^moo-v/', include('tv.urls')),
     re_path('^auth/token/verify/?$', verify_jwt_token),
     re_path('^auth/token/refresh/?$', refresh_jwt_token),
     re_path('^auth/token', obtain_jwt_token),
