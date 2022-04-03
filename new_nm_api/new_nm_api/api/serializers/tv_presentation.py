@@ -40,7 +40,7 @@ class TVPresentationSerializer(serializers.ModelSerializer):
             'file_size',
             'deleted',
             'template',
-            'is_template',
+            # 'is_template',
             'members',
             'created_on',
             'last_modified'
