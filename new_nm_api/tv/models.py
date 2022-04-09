@@ -49,7 +49,6 @@ class Template(models.Model):
     description = models.TextField(blank=True, null=True)
     video_type = models.CharField(max_length=16, 
         choices=(('tall', 'TALL'), ('wide', 'WIDE',),))
-    displayed_image = models.ImageField(upload_to='nm_tv_assets_templates')
     owner = models.ForeignKey(User, on_delete=deletion.CASCADE)
     is_deleted = models.BooleanField(default=False)
     classes_to_share = models.ManyToManyField(Class, blank=True)
