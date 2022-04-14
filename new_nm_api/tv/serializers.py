@@ -69,6 +69,8 @@ class TemplateSerializer(ModelSerializer):
             'classes_to_share',
             'classes_to_share_obj',
             'allowed_functions',
+            'created_on',
+            'last_modified',
         )
 
 
@@ -100,7 +102,7 @@ class TemplateSerializer(ModelSerializer):
         classes = self.validated_data.pop('classes_to_share') if self.validated_data.get('classes_to_share') else None
         is_created = self.instance is None
         instance = super().save(**kwargs)
-        if len(classes):
+        if classes and len(classes):
             if (instance.classes_to_share.count() > 0) :
                 instance.classes_to_share.clear()
             instance.classes_to_share.add(*classes)
