@@ -42,6 +42,12 @@ class Class(models.Model):
     class Meta:
         db_table = 'schools_class'
 
+class ClassMembers(models.Model):
+    class_id = models.IntegerField()
+    user_id = models.IntegerField()
+    class Meta:
+        db_table = 'schools_class_members'
+
 class Template(models.Model):
     code = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=255)
