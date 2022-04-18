@@ -45,7 +45,9 @@ class UsableTemplateListAPIView(ListAPIView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        class_ids = list(ClassMembers.objects.filter(user_id=self.request.user.pk).values_list('class_id', flat=True))
-        return qs.filter(Q(classes_to_share__pk__in=class_ids) | Q(owner=self.request.user))
+        user = self.request.user
+        class_ids = list(ClassMembers.objects.filter(user_id=user.pk).values_list('class_id', flat=True))
+        ids = qs.filter(Q(classes_to_share__pk__in=class_ids) | Q(owner=user)).values_list('id', flat=True)
+        return qs.filter(pk__in=ids)
 
 usable_templates = UsableTemplateListAPIView.as_view()
