@@ -2,9 +2,14 @@ from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import deletion
-from django.db.models.fields import BLANK_CHOICE_DASH
 
 # Create your models here.
+class AssetLanguage(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
 class AssetType(models.Model):
     name = models.CharField(max_length=255)
     extension = models.CharField(max_length=127)
@@ -21,21 +26,6 @@ class Asset(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Sale(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.deletion.SET_NULL, null=True, related_name='created_sales')
-    user = models.ForeignKey(User, on_delete=models.deletion.CASCADE, related_name='sales', unique=True)
-    is_activated = models.BooleanField(default=True)
-    expired_date = models.DateField(null=True, blank=True)
-    additional_assets = models.ManyToManyField(Asset)
-    allow_online_saving = models.NullBooleanField(default=False)
-    allow_upload_to_NM = models.NullBooleanField(default=False)
-    allow_template = models.NullBooleanField(default=False)
-    allow_access_to_asset_store = models.NullBooleanField(default=False)
-
-    def __str__(self):
-        return ' '.join((self.user.first_name, self.user.last_name,))
 
 class Class(models.Model):
     name = models.CharField(max_length = 255)
@@ -66,3 +56,26 @@ class Template(models.Model):
 
     def __str__(self):
         return self.title
+
+class TemplateForSale(models.Model):
+    template = models.ForeignKey(Template, blank=True, null=True, on_delete=models.SET_NULL)
+    language = models.ForeignKey(AssetLanguage, blank=True, null=True, on_delete=models.SET_NULL)
+    is_public = models.BooleanField(default=False)
+    keywords = models.TextField(blank=True, null=True)
+    remarks = models.TextField(blank=True, null=True)
+
+class Sale(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.deletion.SET_NULL, null=True, related_name='created_sales')
+    user = models.ForeignKey(User, on_delete=models.deletion.CASCADE, related_name='sales', unique=True)
+    is_activated = models.BooleanField(default=True)
+    expired_date = models.DateField(null=True, blank=True)
+    additional_assets = models.ManyToManyField(Asset)
+    allow_online_saving = models.NullBooleanField(default=False)
+    allow_upload_to_NM = models.NullBooleanField(default=False)
+    allow_template = models.NullBooleanField(default=False)
+    allow_access_to_asset_store = models.NullBooleanField(default=False)
+    templates = models.ManyToManyField(TemplateForSale, blank=True, null=True)
+
+    def __str__(self):
+        return ' '.join((self.user.first_name, self.user.last_name,))
+

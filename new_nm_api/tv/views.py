@@ -5,7 +5,7 @@ from django.db.models import Q
 
 
 from .serializers import AssetSerializer, TemplateSerializer
-from .models import Asset, ClassMembers, Template
+from .models import Asset, ClassMembers, Sale, Template
 
 # Create your views here.
 class ListAssetsAPIView(ListAPIView):
@@ -48,6 +48,15 @@ class UsableTemplateListAPIView(ListAPIView):
         user = self.request.user
         class_ids = list(ClassMembers.objects.filter(user_id=user.pk).values_list('class_id', flat=True))
         ids = qs.filter(Q(classes_to_share__pk__in=class_ids) | Q(owner=user)).values_list('id', flat=True)
-        return qs.filter(pk__in=ids)
+
+        sale_user_ids = [user.id,] 
+        try:
+            sale_user_ids.append(user.userprofile.group_account_id)
+        except:
+            pass
+        sale_template_ids = list(Sale.objects.filter(user_id__in=sale_user_ids)
+            .values_list('templates__template__pk', flat=True))
+       
+        return qs.filter(Q(pk__in=ids) | Q(pk__in=sale_template_ids))
 
 usable_templates = UsableTemplateListAPIView.as_view()

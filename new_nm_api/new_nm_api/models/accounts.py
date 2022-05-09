@@ -6,6 +6,8 @@ from new_nm_api.settings import FileServers
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='userprofile', on_delete=models.CASCADE)
     country = models.CharField(max_length=50, default='', blank=True)
+    group_account = models.ForeignKey(User, on_delete=models.SET_NULL,
+        related_name='group_users', null=True, blank=True)
 
     class Meta:
         db_table = 'accounts_userprofile'
