@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import viewsets
 from django.db.models import Q
+from datetime import date
 
 
 from .serializers import AssetSerializer, TemplateSerializer
@@ -54,7 +55,10 @@ class UsableTemplateListAPIView(ListAPIView):
             sale_user_ids.append(user.userprofile.group_account_id)
         except:
             pass
-        sale_template_ids = list(Sale.objects.filter(user_id__in=sale_user_ids)
+
+        today = date.today()
+        sale_template_ids = list(Sale.objects.filter(user_id__in=sale_user_ids,
+            is_activated=True, expired_date__gt=today)
             .values_list('templates__template__pk', flat=True))
        
         return qs.filter(Q(pk__in=ids) | Q(pk__in=sale_template_ids))
