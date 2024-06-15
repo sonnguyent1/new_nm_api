@@ -87,7 +87,10 @@ class TVPresentationSerializer(serializers.ModelSerializer):
         members = self.validated_data.pop('members') if self.validated_data.get('members') else None
         is_created = self.instance is None
         instance = super().save(**kwargs)
-        if members:
+        if members is not None:
+            existing_members = TVPresentationMember.objects.filter(tvpresentation_id=instance.pk)
+            existing_members.delete()
+
             qs_members = User.objects.filter(pk__in=[user.id for user in members])
             if qs_members.count() == len(members):
                 for m in members:
