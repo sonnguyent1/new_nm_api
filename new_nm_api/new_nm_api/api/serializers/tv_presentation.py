@@ -46,18 +46,6 @@ class TVPresentationSerializer(serializers.ModelSerializer):
             'last_modified'
         )
 
-    def partial_update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if 'members' in request.data:
-            instance.members.clear()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            instance._prefetched_objects_cache = {}
-        
-        return Response(serializer.data)
 
     def validate_user(self, value):
         try:
@@ -89,7 +77,8 @@ class TVPresentationSerializer(serializers.ModelSerializer):
         instance = super().save(**kwargs)
         if members is not None:
             existing_members = TVPresentationMember.objects.filter(tvpresentation_id=instance.pk)
-            existing_members.delete()
+            if existing_members is not None and existing_members.count() > 0:
+                existing_members.delete()
 
             qs_members = User.objects.filter(pk__in=[user.id for user in members])
             if qs_members.count() == len(members):
