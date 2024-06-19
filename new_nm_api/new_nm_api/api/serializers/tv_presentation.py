@@ -69,6 +69,27 @@ class TVPresentationSerializer(serializers.ModelSerializer):
     
     def get_member_objs(self, obj):
         return [(UserSerializer(m.user)).data for m in obj.members.filter(user__is_active=True)]
+    
+    def update_folder_permission_for_user(self, is_share, user_id):
+        try:
+            url = '%s/folders/%s/%s' % (settings.FS_ENDPOINT, self.instance.folder_id, 'share' if is_share else 'unshare')
+            print('[update_folder_permission_for_user] URL: %s' % url)
+            params = {
+                'with_user': user_id,
+                'app_secret': settings.FS_SECRET_KEY,
+                'user_id': self.instant.user_id,
+            }
+            data = urlencode(params)
+            req = Request(url, data.encode('utf-8'))
+            response = urlopen(req)
+            json_str = response.read()
+            json_dict = json.loads(json_str)
+            if json_dict.get('status') and json_dict.get('status') == 'ok':
+                print('Folder shared with user %s' % user_id)
+                return True
+        except Exception as e:
+            print('[update_folder_permission_for_user] Error: %s' % str(e))
+        return False
 
     @transaction.atomic
     def save(self, **kwargs):
@@ -78,12 +99,15 @@ class TVPresentationSerializer(serializers.ModelSerializer):
         if members is not None:
             existing_members = TVPresentationMember.objects.filter(tvpresentation_id=instance.pk)
             if existing_members is not None and existing_members.count() > 0:
+                for existing_member in existing_members:
+                    self.update_folder_permission_for_user(False, existing_member.user_id)
                 existing_members.delete()
 
             qs_members = User.objects.filter(pk__in=[user.id for user in members])
             if qs_members.count() == len(members):
                 for m in members:
                     TVPresentationMember.objects.update_or_create(tvpresentation_id=instance.pk, user_id=m.id)
+                    self.update_folder_permission_for_user(True, m.id)
         
         if is_created:
             instance.folder_id = self.create_folder_for_user(instance)
