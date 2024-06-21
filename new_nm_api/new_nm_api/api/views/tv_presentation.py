@@ -6,6 +6,7 @@ from ..serializers.tv_presentation import TVPresentationSerializer
 from ...models.tv_presentation import TVPresentation, TVPresentationMember
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
 
 
 class TVPresentationViewSet(viewsets.ModelViewSet):
@@ -37,6 +38,7 @@ presentations = TVPresentationViewSet.as_view({
     'post': 'create',
 })
 
+@csrf_exempt
 def share_folder_presentation_members(request, pk=None):
     if request.method == 'POST':
         try:
