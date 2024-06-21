@@ -6,7 +6,7 @@ from ..serializers.tv_presentation import TVPresentationSerializer
 from ...models.tv_presentation import TVPresentation, TVPresentationMember
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 
 
 class TVPresentationViewSet(viewsets.ModelViewSet):
@@ -38,7 +38,7 @@ presentations = TVPresentationViewSet.as_view({
     'post': 'create',
 })
 
-@csrf_exempt
+@api_view(['POST'])
 def share_folder_presentation_members(request, pk=None):
     if request.method == 'POST':
         try:
@@ -53,4 +53,3 @@ def share_folder_presentation_members(request, pk=None):
         except TVPresentation.DoesNotExist:
             return Response({'status': 'error', 'message': 'Presentation does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
     return Response({'status': 'error', 'message': 'Method not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
-
