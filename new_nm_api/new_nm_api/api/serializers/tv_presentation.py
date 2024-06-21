@@ -78,7 +78,7 @@ class TVPresentationSerializer(serializers.ModelSerializer):
             params = {
                 'with_user': user_id,
                 'app_secret': settings.FS_SECRET_KEY,
-                'user_id': self.instant.user_id,
+                'user_id': self.instance.user_id,
             }
             data = urlencode(params)
             req = Request(url, data.encode('utf-8'))
