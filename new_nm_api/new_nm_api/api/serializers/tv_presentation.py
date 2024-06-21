@@ -8,6 +8,7 @@ from rest_framework import serializers
 from ...models.tv_presentation import TVPresentation, TVPresentationMember
 from ...models.accounts import UserProfile
 from django.contrib.auth.models import User
+from new_nm_api.settings import FileServers
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,7 +73,7 @@ class TVPresentationSerializer(serializers.ModelSerializer):
     
     def update_folder_permission_for_user(self, is_share, user_id):
         try:
-            url = '%s/folders/%s/%s' % (settings.FileServers.DEFAULTS, self.instance.folder_id, 'share' if is_share else 'unshare')
+            url = '%s/folders/%s/%s' % (FileServers.DEFAULTS, self.instance.folder_id, 'share' if is_share else 'unshare')
             print('[update_folder_permission_for_user] URL: %s' % url)
             params = {
                 'with_user': user_id,
