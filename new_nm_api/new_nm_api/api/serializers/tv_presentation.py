@@ -72,7 +72,7 @@ class TVPresentationSerializer(serializers.ModelSerializer):
     
     def update_folder_permission_for_user(self, is_share, user_id):
         try:
-            url = '%s/folders/%s/%s' % (settings.FS_ENDPOINT, self.instance.folder_id, 'share' if is_share else 'unshare')
+            url = '%s/folders/%s/%s' % (settings.FileServers.DEFAULTS, self.instance.folder_id, 'share' if is_share else 'unshare')
             print('[update_folder_permission_for_user] URL: %s' % url)
             params = {
                 'with_user': user_id,
