@@ -2,6 +2,8 @@ from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import deletion
+from django.db.models.deletion import CASCADE
+from new_nm_api.models.tv_presentation import TVPresentation
 
 # Create your models here.
 class AssetLanguage(models.Model):
@@ -63,6 +65,11 @@ class TemplateForSale(models.Model):
     is_public = models.BooleanField(default=False)
     keywords = models.TextField(blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
+
+class PublishQueue(models.Model):
+    presentation = models.ForeignKey(TVPresentation, on_delete=CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
+    is_completed = models.BooleanField(default=False)  
 
 class Sale(models.Model):
     creator = models.ForeignKey(User, on_delete=models.deletion.SET_NULL, null=True, related_name='created_sales')

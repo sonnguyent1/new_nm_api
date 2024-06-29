@@ -7,6 +7,9 @@ from ...models.tv_presentation import TVPresentation, TVPresentationMember
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from tv.models import PublishQueue
+from pytz import timezone, utc
+from datetime import datetime
 
 
 class TVPresentationViewSet(viewsets.ModelViewSet):
@@ -50,6 +53,26 @@ def share_folder_presentation_members(request, pk=None):
                     return Response({'status': 'error', 'message': 'Error sharing folder with members.'}, status=status.HTTP_400_BAD_REQUEST)
             # responde list of members in json 
             return Response(list(presentation.members.values_list('user_id', flat=True)), status=status.HTTP_200_OK)
+        except TVPresentation.DoesNotExist:
+            return Response({'status': 'error', 'message': 'Presentation does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'status': 'error', 'message': 'Method not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def publish_presentation(request, pk=None):
+    if request.method == 'POST':
+        try:
+            presentation = TVPresentation.objects.get(pk=pk)
+            incomplete_publish = PublishQueue.objects.filter(
+                presentation_id=pk, is_completed=False)
+            if incomplete_publish.exists():
+                first_incompleted_publish = incomplete_publish.first()
+                timezone
+                first_incompleted_publish.date_added = datetime.now(utc)
+                first_incompleted_publish.save()
+            else:   
+                PublishQueue.objects.create(presentation=presentation, date_added=datetime.now(utc), is_completed=False)
+            return Response({'status': 'success', 'message': 'Presentation added to publish queue.'}, status=status.HTTP_200_OK)
         except TVPresentation.DoesNotExist:
             return Response({'status': 'error', 'message': 'Presentation does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
     return Response({'status': 'error', 'message': 'Method not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
