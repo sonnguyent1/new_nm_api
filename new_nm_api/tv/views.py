@@ -7,11 +7,9 @@ from rest_framework.decorators import api_view
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from pytz import utc
-from models import PublishQueue
-
 
 from .serializers import AssetSerializer, TemplateSerializer
-from .models import Asset, ClassMembers, Sale, Template
+from .models import Asset, ClassMembers, Sale, Template, PublishQueue
 
 # Create your views here.
 class ListAssetsAPIView(ListAPIView):
