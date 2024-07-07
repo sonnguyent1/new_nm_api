@@ -1,8 +1,13 @@
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView
 from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import api_view
 from django.db.models import Q
-from datetime import date
+from datetime import date, datetime, timedelta
+from pytz import utc
+from models import PublishQueue
 
 
 from .serializers import AssetSerializer, TemplateSerializer
@@ -62,5 +67,50 @@ class UsableTemplateListAPIView(ListAPIView):
             .values_list('templates__template__pk', flat=True))
        
         return qs.filter(Q(pk__in=ids) | Q(pk__in=sale_template_ids))
+    
+@api_view(['GET'])
+def get_publish_queues(request):
+    # Get all rows in PublishQueue where Completed = false and (Date Processed = null or Date Processed > 1 hour behind the current time), ordered by Date Added ascending
+    current_datetime = datetime.now(utc)
+    one_hour_ago = current_datetime - timedelta(hours=1)
+    publish_queue_qs = PublishQueue.objects.filter(is_completed=False).filter(
+        Q(date_processed=None) | Q(date_processed__lt=one_hour_ago)).order_by('date_added')
+    
+    return Response([{
+        'id': pq.id,
+        'presentation_id': pq.presentation_id,
+        'date_added': pq.date_added,
+        'date_processed': pq.date_processed,
+        'is_completed': pq.is_completed,
+    } for pq in publish_queue_qs], status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def publish_queue_dequeue(request, pk=None):
+    # Get the row in PublishQueue with the given ID
+    try:
+        publish_queue = PublishQueue.objects.get(pk=pk)
+    except PublishQueue.DoesNotExist:
+        return Response({'status': 'error', 'message': 'PublishQueue does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Set the Date Processed to the current time
+    publish_queue.date_processed = datetime.now(utc)
+    publish_queue.save()
+    
+    return Response({'status': 'success', 'message': 'PublishQueue processed.'}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def publish_queue_complete(request, pk=None):
+    # Get the row in PublishQueue with the given ID
+    try:
+        publish_queue = PublishQueue.objects.get(pk=pk)
+    except PublishQueue.DoesNotExist:
+        return Response({'status': 'error', 'message': 'PublishQueue does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Set the Is Completed to true
+    publish_queue.is_completed = True
+    publish_queue.save()
+    
+    return Response({'status': 'success', 'message': 'PublishQueue completed.'}, status=status.HTTP_200_OK)
+
 
 usable_templates = UsableTemplateListAPIView.as_view()

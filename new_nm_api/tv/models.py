@@ -70,6 +70,7 @@ class PublishQueue(models.Model):
     presentation = models.ForeignKey(TVPresentation, on_delete=CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
     is_completed = models.BooleanField(default=False)  
+    date_processed = models.DateTimeField(blank=True, null=True)
 
 class Sale(models.Model):
     creator = models.ForeignKey(User, on_delete=models.deletion.SET_NULL, null=True, related_name='created_sales')

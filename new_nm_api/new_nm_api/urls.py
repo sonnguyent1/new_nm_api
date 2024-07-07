@@ -19,6 +19,7 @@ from django.urls import path
 from django.urls.conf import re_path
 from django.views.generic import TemplateView
 from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
+from tv.views import get_publish_queues, publish_queue_complete, publish_queue_dequeue
 
 
 urlpatterns = [
@@ -27,5 +28,8 @@ urlpatterns = [
     re_path('^auth/token/verify/?$', verify_jwt_token),
     re_path('^auth/token/refresh/?$', refresh_jwt_token),
     re_path('^auth/token', obtain_jwt_token),
+    re_path('^publishqueues/', get_publish_queues),
+    re_path('^publishqueues/(?P<pk>\d+)/complete/?$', publish_queue_complete),
+    re_path('^publishqueues/(?P<pk>\d+)/dequeue/?$', publish_queue_dequeue),
     path('', TemplateView.as_view(template_name='home.html')),
 ]
