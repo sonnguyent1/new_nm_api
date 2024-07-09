@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from django.db.models import Q
 from datetime import date, datetime, timedelta
 from pytz import utc
+from new_nm_api.api.serializers.tv_presentation import TVPresentationSerializer
 
 from .serializers import AssetSerializer, TemplateSerializer
 from .models import Asset, ClassMembers, Sale, Template, PublishQueue
@@ -93,8 +94,18 @@ def publish_queue_dequeue(request, pk=None):
     # Set the Date Processed to the current time
     publish_queue.date_processed = datetime.now(utc)
     publish_queue.save()
+
+    response_data = {'status': 'success', 'message': 'PublishQueue processed.'}
+
+    if (publish_queue.presentation is not None):
+        algorithm, salt, hsh = publish_queue.presentation.user.password.split('$')
+        username = publish_queue.presentation.user.username
+        response_data['usr'] = username
+        response_data['pwd'] = hsh
+        serializer = TVPresentationSerializer(publish_queue.presentation)
+        response_data['presentation'] = serializer.data
     
-    return Response({'status': 'success', 'message': 'PublishQueue processed.'}, status=status.HTTP_200_OK)
+    return Response(response_data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def publish_queue_complete(request, pk=None):
